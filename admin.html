@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Admin | Wedding</title>
+  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💒</text></svg>" />
+</head>
+<body>
+
+<div class="admin-layout">
+
+  <!-- ══════════════════════════════
+       SIDEBAR
+  ══════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand">
+        <span class="sidebar-brand-icon">💒</span>
+        <div>
+          <span class="sidebar-brand-name">Wedding Admin</span>
+          <span class="sidebar-brand-version">v1.0</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-section-label">Menu Utama</p>
+
+      <button class="nav-item active" id="nav-dashboard" onclick="navigate('dashboard')">
+        <span class="nav-icon">📊</span>
+        <span>Dashboard</span>
+      </button>
+
+      <button class="nav-item" id="nav-guests" onclick="navigate('guests')">
+        <span class="nav-icon">👥</span>
+        <span>Manajemen Tamu</span>
+        <span class="nav-badge" id="nav-badge-guests">0</span>
+      </button>
+
+      <button class="nav-item" id="nav-wishes" onclick="navigate('wishes')">
+        <span class="nav-icon">💌</span>
+        <span>Ucapan Tamu</span>
+        <span class="nav-badge" id="nav-badge-wishes">0</span>
+      </button>
+
+      <p class="nav-section-label">Konfigurasi</p>
+
+      <button class="nav-item" id="nav-settings" onclick="navigate('settings')">
+        <span class="nav-icon">⚙️</span>
+        <span>Pengaturan</span>
+      </button>
+
+      <button class="nav-item" id="nav-preview" onclick="openPreview()">
+        <span class="nav-icon">👁️</span>
+        <span>Preview Undangan</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="nav-item" onclick="doLogout()" style="color:var(--danger); margin-bottom:0;">
+        <span class="nav-icon">🚪</span>
+        <span>Keluar</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════ -->
+  <div class="admin-main">
+
+    <!-- Topbar -->
+    <div class="admin-topbar">
+      <div>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div class="topbar-subtitle" id="topbar-subtitle">Ringkasan undangan pernikahan</div>
+      </div>
+      <div class="topbar-actions">
+        <a href="index.html" target="_blank" class="btn btn-secondary btn-sm">👁️ Preview</a>
+        <div class="topbar-user">
+          <div class="topbar-user-avatar" id="admin-avatar">A</div>
+          <span class="topbar-user-name" id="admin-username">Admin</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         PAGE: DASHBOARD
+    ══════════════════════ -->
+    <div class="page-content active" id="page-dashboard">
+
+      <!-- Stats -->
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card gold">
+          <div class="stat-icon gold">👥</div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label">Total Tamu</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-icon green">✅</div>
+          <div class="stat-value" id="stat-hadir">0</div>
+          <div class="stat-label">Konfirmasi Hadir</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-icon red">❌</div>
+          <div class="stat-value" id="stat-tidak">0</div>
+          <div class="stat-label">Tidak Hadir</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-icon blue">💌</div>
+          <div class="stat-value" id="stat-wishes">0</div>
+          <div class="stat-label">Ucapan Masuk</div>
+        </div>
+      </div>
+
+      <!-- RSVP Progress -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="section-header">
+          <div>
+            <div class="section-title-admin">Status RSVP</div>
+            <div class="section-subtitle-admin">Persentase konfirmasi kehadiran tamu</div>
+          </div>
+        </div>
+        <div class="rsvp-chart" id="rsvp-chart">
+          <div class="rsvp-bar-hadir" id="rsvp-bar-hadir" style="width:0%"></div>
+          <div class="rsvp-bar-tidak" id="rsvp-bar-tidak" style="width:0%"></div>
+          <div class="rsvp-bar-pending" id="rsvp-bar-pending" style="width:100%"></div>
+        </div>
+        <div class="rsvp-legend">
+          <div class="legend-item"><div class="rsvp-dot" style="background:var(--success)"></div> Hadir (<span id="legend-hadir">0</span>)</div>
+          <div class="legend-item"><div class="rsvp-dot" style="background:var(--danger)"></div> Tidak (<span id="legend-tidak">0</span>)</div>
+          <div class="legend-item"><div class="rsvp-dot" style="background:var(--warning)"></div> Pending (<span id="legend-pending">0</span>)</div>
+        </div>
+      </div>
+
+      <!-- Countdown Dashboard -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="section-header">
+          <div>
+            <div class="section-title-admin">⏳ Hitung Mundur</div>
+            <div class="section-subtitle-admin">Waktu menuju hari pernikahan</div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:0.75rem;">
+          <div class="cd-box">
+            <span class="cd-number" id="adm-cd-days">--</span>
+            <span class="cd-label">Hari</span>
+          </div>
+          <div class="cd-box">
+            <span class="cd-number" id="adm-cd-hours">--</span>
+            <span class="cd-label">Jam</span>
+          </div>
+          <div class="cd-box">
+            <span class="cd-number" id="adm-cd-minutes">--</span>
+            <span class="cd-label">Menit</span>
+          </div>
+          <div class="cd-box">
+            <span class="cd-number" id="adm-cd-seconds">--</span>
+            <span class="cd-label">Detik</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Wishes -->
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <div class="section-title-admin">💌 Ucapan Terbaru</div>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="navigate('wishes')">Lihat Semua</button>
+        </div>
+        <div id="recent-wishes">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         PAGE: GUESTS
+    ══════════════════════ -->
+    <div class="page-content" id="page-guests">
+      <div class="section-header" style="margin-bottom:1.5rem;">
+        <div>
+          <div class="section-title-admin">👥 Manajemen Tamu</div>
+          <div class="section-subtitle-admin">Kelola daftar tamu undangan</div>
+        </div>
+        <div style="display:flex; gap:0.75rem;">
+          <button class="btn btn-success btn-sm" onclick="exportCSV()">📥 Export CSV</button>
+          <button class="btn btn-primary btn-sm" onclick="openAddGuestModal()">➕ Tambah Tamu</button>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <input type="text" id="guest-search" placeholder="🔍 Cari nama tamu..." oninput="filterGuests()" />
+        <select id="guest-filter-rsvp" onchange="filterGuests()">
+          <option value="">Semua Status</option>
+          <option value="hadir">✅ Hadir</option>
+          <option value="tidak">❌ Tidak Hadir</option>
+          <option value="pending">⏳ Belum Konfirmasi</option>
+        </select>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrapper">
+        <table id="guests-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nama Tamu</th>
+              <th>No. HP</th>
+              <th>Status RSVP</th>
+              <th>Link Undangan</th>
+              <th>Ditambahkan</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="guests-tbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="guests-empty" style="display:none; text-align:center; padding:3rem; color:var(--text-muted);">
+        <div style="font-size:3rem; margin-bottom:0.75rem;">👥</div>
+        <p>Belum ada tamu yang ditambahkan.</p>
+        <button class="btn btn-primary" style="margin-top:1rem;" onclick="openAddGuestModal()">➕ Tambah Tamu Pertama</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         PAGE: WISHES
+    ══════════════════════ -->
+    <div class="page-content" id="page-wishes">
+      <div class="section-header" style="margin-bottom:1.5rem;">
+        <div>
+          <div class="section-title-admin">💌 Ucapan Tamu</div>
+          <div class="section-subtitle-admin">Ucapan yang masuk dari tamu</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openAddWishModal()">➕ Tambah Ucapan</button>
+      </div>
+
+      <div id="wishes-admin-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- ══════════════════════
+         PAGE: SETTINGS
+    ══════════════════════ -->
+    <div class="page-content" id="page-settings">
+      <div class="section-title-admin" style="margin-bottom:1.5rem;">⚙️ Pengaturan Undangan</div>
+
+      <form id="settings-form" onsubmit="saveSettings(event)">
+
+        <!-- Mempelai Pria -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="section-title-admin" style="margin-bottom:1.25rem;">🤵 Mempelai Pria</div>
+          <div class="settings-grid">
+            <div class="form-field">
+              <label>Nama Panggilan</label>
+              <input type="text" name="groomName" id="set-groomName" placeholder="Rizky Pratama" required />
+            </div>
+            <div class="form-field">
+              <label>Nama Formal (gelar)</label>
+              <input type="text" name="groomFormal" id="set-groomFormal" placeholder="Rizky Pratama, S.T." />
+            </div>
+            <div class="form-field">
+              <label>Nama Ayah</label>
+              <input type="text" name="groomFather" id="set-groomFather" />
+            </div>
+            <div class="form-field">
+              <label>Nama Ibu</label>
+              <input type="text" name="groomMother" id="set-groomMother" />
+            </div>
+            <div class="form-field full">
+              <label>URL Foto Mempelai Pria</label>
+              <input type="text" name="groomPhoto" id="set-groomPhoto" placeholder="https://... (biarkan kosong untuk ikon default)" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Mempelai Wanita -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="section-title-admin" style="margin-bottom:1.25rem;">👰 Mempelai Wanita</div>
+          <div class="settings-grid">
+            <div class="form-field">
+              <label>Nama Panggilan</label>
+              <input type="text" name="brideName" id="set-brideName" placeholder="Annisa Rahayu" required />
+            </div>
+            <div class="form-field">
+              <label>Nama Formal (gelar)</label>
+              <input type="text" name="brideFormal" id="set-brideFormal" placeholder="Annisa Rahayu, S.Pd." />
+            </div>
+            <div class="form-field">
+              <label>Nama Ayah</label>
+              <input type="text" name="brideFather" id="set-brideFather" />
+            </div>
+            <div class="form-field">
+              <label>Nama Ibu</label>
+              <input type="text" name="brideMother" id="set-brideMother" />
+            </div>
+            <div class="form-field full">
+              <label>URL Foto Mempelai Wanita</label>
+              <input type="text" name="bridePhoto" id="set-bridePhoto" placeholder="https://... (biarkan kosong untuk ikon default)" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Akad Nikah -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="section-title-admin" style="margin-bottom:1.25rem;">🕌 Akad Nikah</div>
+          <div class="settings-grid">
+            <div class="form-field">
+              <label>Tanggal Akad</label>
+              <input type="date" name="akadDate" id="set-akadDate" required />
+            </div>
+            <div class="form-field">
+              <label>Jam Akad</label>
+              <input type="time" name="akadTime" id="set-akadTime" />
+            </div>
+            <div class="form-field">
+              <label>Nama Tempat Akad</label>
+              <input type="text" name="akadVenue" id="set-akadVenue" />
+            </div>
+            <div class="form-field">
+              <label>Alamat Akad</label>
+              <input type="text" name="akadAddress" id="set-akadAddress" />
+            </div>
+            <div class="form-field full">
+              <label>Link Google Maps (Akad)</label>
+              <input type="url" name="akadMapsUrl" id="set-akadMapsUrl" placeholder="https://maps.google.com/..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- Resepsi -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="section-title-admin" style="margin-bottom:1.25rem;">🎊 Resepsi</div>
+          <div class="settings-grid">
+            <div class="form-field">
+              <label>Tanggal Resepsi</label>
+              <input type="date" name="receptionDate" id="set-receptionDate" required />
+            </div>
+            <div class="form-field">
+              <label>Jam Resepsi</label>
+              <input type="time" name="receptionTime" id="set-receptionTime" />
+            </div>
+            <div class="form-field">
+              <label>Nama Gedung/Tempat</label>
+              <input type="text" name="receptionVenue" id="set-receptionVenue" />
+            </div>
+            <div class="form-field">
+              <label>Alamat Resepsi</label>
+              <input type="text" name="receptionAddress" id="set-receptionAddress" />
+            </div>
+            <div class="form-field full">
+              <label>Link Google Maps (Resepsi)</label>
+              <input type="url" name="receptionMapsUrl" id="set-receptionMapsUrl" placeholder="https://maps.google.com/..." />
+            </div>
+          </div>
+        </div>
+
+        <!-- Ayat / Quote -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="section-title-admin" style="margin-bottom:1.25rem;">📖 Kutipan Ayat</div>
+          <div class="settings-grid">
+            <div class="form-field full">
+              <label>Teks Kutipan</label>
+              <textarea name="quoteText" id="set-quoteText" rows="3"></textarea>
+            </div>
+            <div class="form-field full">
+              <label>Sumber (misal: QS. Ar-Rum: 21)</label>
+              <input type="text" name="quoteSource" id="set-quoteSource" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Rekening -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="section-title-admin" style="margin-bottom:1.25rem;">🏦 Amplop Digital</div>
+          <div class="settings-grid">
+            <div class="form-field">
+              <label>Nama Bank 1</label>
+              <input type="text" name="bankName1" id="set-bankName1" />
+            </div>
+            <div class="form-field">
+              <label>Nomor Rekening 1</label>
+              <input type="text" name="bankAccount1" id="set-bankAccount1" />
+            </div>
+            <div class="form-field full">
+              <label>Atas Nama 1</label>
+              <input type="text" name="bankHolder1" id="set-bankHolder1" />
+            </div>
+            <div class="form-field">
+              <label>Nama Bank 2</label>
+              <input type="text" name="bankName2" id="set-bankName2" />
+            </div>
+            <div class="form-field">
+              <label>Nomor Rekening 2</label>
+              <input type="text" name="bankAccount2" id="set-bankAccount2" />
+            </div>
+            <div class="form-field full">
+              <label>Atas Nama 2</label>
+              <input type="text" name="bankHolder2" id="set-bankHolder2" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Base URL & Musik -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="section-title-admin" style="margin-bottom:1.25rem;">🔗 URL & Musik</div>
+          <div class="settings-grid">
+            <div class="form-field full">
+              <label>Base URL (URL dasar undangan)</label>
+              <input type="text" name="baseUrl" id="set-baseUrl" placeholder="https://namadomain.com/index.html" />
+              <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.4rem;">
+                💡 Link tamu: <code style="color:var(--primary);">[Base URL]?to=NamaTamu</code> — kosongkan agar otomatis
+              </p>
+            </div>
+            <div class="form-field full">
+              <label>🎵 URL Musik Latar (MP3/OGG)</label>
+              <input type="text" name="musicUrl" id="set-musicUrl"
+                placeholder="https://www.bensound.com/bensound-music/bensound-romantic.mp3" />
+              <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.4rem;">
+                💡 Masukkan link langsung ke file MP3 yang bisa diakses publik. Kosongkan untuk musik default.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Credentials -->
+        <div class="card" style="margin-bottom:1.5rem;">
+          <div class="section-title-admin" style="margin-bottom:1.25rem;">🔐 Kredensial Admin</div>
+          <div class="settings-grid">
+            <div class="form-field">
+              <label>Username Baru</label>
+              <input type="text" name="newUsername" id="set-newUsername" placeholder="Biarkan kosong jika tidak ganti" />
+            </div>
+            <div class="form-field">
+              <label>Password Baru</label>
+              <input type="password" name="newPassword" id="set-newPassword" placeholder="Biarkan kosong jika tidak ganti" />
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; font-size:0.9rem;">
+          💾 Simpan Semua Perubahan
+        </button>
+      </form>
+    </div>
+
+  </div><!-- /admin-main -->
+</div><!-- /admin-layout -->
+
+<!-- ══════════════════════
+     MODAL: TAMBAH UCAPAN
+══════════════════════ -->
+<div class="modal-overlay" id="modal-add-wish">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">➕ Tambah Ucapan Manual</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-wish')">✕</button>
+    </div>
+    <form id="wish-admin-form" onsubmit="submitAdminWish(event)">
+      <div class="form-field">
+        <label for="wish-admin-name">Nama Pengirim *</label>
+        <input type="text" id="wish-admin-name" placeholder="Nama tamu" required maxlength="100" />
+      </div>
+      <div class="form-field">
+        <label for="wish-admin-rsvp">Status Kehadiran</label>
+        <select id="wish-admin-rsvp">
+          <option value="hadir">✅ Hadir</option>
+          <option value="tidak">❌ Tidak Hadir</option>
+          <option value="pending">⏳ Belum Konfirmasi</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="wish-admin-text">Ucapan / Doa *</label>
+        <textarea id="wish-admin-text" rows="4" placeholder="Tulis ucapan untuk kedua mempelai..." required maxlength="400"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-wish')">Batal</button>
+        <button type="submit" class="btn btn-primary">💌 Kirim Ucapan</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════════════════════
+     MODAL: TAMBAH TAMU
+══════════════════════ -->
+<div class="modal-overlay" id="modal-add-guest">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modal-guest-title">➕ Tambah Tamu</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-guest')">✕</button>
+    </div>
+
+    <form id="guest-form" onsubmit="submitGuestForm(event)">
+      <input type="hidden" id="guest-edit-id" value="" />
+      <div class="form-field">
+        <label for="guest-name-input">Nama Tamu *</label>
+        <input type="text" id="guest-name-input" placeholder="Nama lengkap tamu" required maxlength="100" />
+      </div>
+      <div class="form-field">
+        <label for="guest-phone-input">No. HP / WhatsApp</label>
+        <input type="tel" id="guest-phone-input" placeholder="08xxxxxxxxxx (opsional)" />
+      </div>
+      <div class="form-field">
+        <label for="guest-rsvp-input">Status RSVP</label>
+        <select id="guest-rsvp-input">
+          <option value="pending">⏳ Belum Konfirmasi</option>
+          <option value="hadir">✅ Hadir</option>
+          <option value="tidak">❌ Tidak Hadir</option>
+        </select>
+      </div>
+
+      <!-- Link Preview -->
+      <div id="link-preview-section" style="display:none; margin-top:0.75rem;">
+        <label style="font-size:0.75rem; font-weight:600; color:var(--text-secondary); letter-spacing:0.1em; text-transform:uppercase; display:block; margin-bottom:0.4rem;">
+          🔗 Link Undangan
+        </label>
+        <div class="link-box">
+          <input type="text" id="guest-link-preview" readonly />
+          <button type="button" class="btn btn-primary btn-sm" onclick="copyGuestLink()">📋</button>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modal-add-guest')">Batal</button>
+        <button type="submit" class="btn btn-primary" id="guest-submit-btn">➕ Tambah</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="admin-toast" id="admin-toast"></div>
+
+<script src="js/db.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

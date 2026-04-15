@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Admin | Wedding Dashboard</title>
+  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💒</text></svg>" />
+</head>
+<body>
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="login-logo-icon">💒</span>
+      <span class="login-logo-title">Wedding Admin</span>
+      <span class="login-logo-sub">Dashboard Undangan Digital</span>
+    </div>
+
+    <div class="login-form">
+      <h2>Masuk ke Dashboard</h2>
+      <form id="login-form" onsubmit="doLogin(event)">
+        <div class="form-field">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Masukkan username" autocomplete="username" required />
+        </div>
+        <div class="form-field">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Masukkan password" autocomplete="current-password" required />
+        </div>
+        <div id="login-error" class="login-error">
+          ❌ Username atau password salah. Coba lagi.
+        </div>
+        <button type="submit" class="btn-login" id="login-btn">
+          🔐 Masuk
+        </button>
+      </form>
+      <p style="margin-top:1.25rem; font-size:0.75rem; color:var(--text-muted); text-align:center;">
+        Default: admin / wedding2025
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="js/db.js"></script>
+<script>
+  // Redirect if already logged in
+  if (sessionStorage.getItem('wedding_admin_logged_in') === 'true') {
+    window.location.href = 'admin.html';
+  }
+
+  function doLogin(event) {
+    event.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const btn = document.getElementById('login-btn');
+    const errorEl = document.getElementById('login-error');
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Memverifikasi...';
+    errorEl.classList.remove('show');
+
+    setTimeout(() => {
+      if (WeddingDB.verifyAdmin(username, password)) {
+        sessionStorage.setItem('wedding_admin_logged_in', 'true');
+        sessionStorage.setItem('wedding_admin_user', username);
+        window.location.href = 'admin.html';
+      } else {
+        errorEl.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = '🔐 Masuk';
+        document.getElementById('password').value = '';
+      }
+    }, 700);
+  }
+</script>
+</body>
+</html>

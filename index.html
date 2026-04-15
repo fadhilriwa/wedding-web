@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Undangan Pernikahan Digital - Rizky Pratama & Annisa Rahayu" />
+  <title>Undangan Pernikahan | Rizky & Annisa</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💒</text></svg>" />
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     ENVELOPE OVERLAY (Opening Screen)
+════════════════════════════════════════ -->
+<div id="envelope-overlay">
+  <div class="envelope-box">
+    <span class="envelope-icon">💌</span>
+    <span class="envelope-subtitle">Kepada Yth.</span>
+    <div class="envelope-guest" id="overlay-guest-name"></div>
+    <span class="envelope-title">Undangan Pernikahan</span>
+    <p style="font-family:'Cormorant Garamond',serif; color:rgba(255,255,255,0.5); font-size:0.9rem; font-style:italic; margin-bottom:2rem;">
+      Kami mengundang Anda untuk hadir dan mendoakan hari bahagia kami
+    </p>
+    <button class="btn-open" id="btn-open-invitation" onclick="openInvitation()">
+      ✉️ &nbsp; Buka Undangan
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MUSIC PLAYER
+════════════════════════════════════════ -->
+<button id="music-btn" title="Musik" onclick="toggleMusic()">🎵</button>
+<!-- Musik diatur dari Admin → Pengaturan → URL Musik -->
+<audio id="bg-music" loop preload="none"></audio>
+
+<!-- ════════════════════════════════════════
+     MAIN INVITATION CONTENT
+════════════════════════════════════════ -->
+<main id="main-content">
+
+  <!-- ── HERO ── -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-photo"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-floral-top"></div>
+
+    <div class="hero-content">
+      <p class="hero-bismillah" id="hero-quote-text">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</p>
+      <p class="hero-label">Undangan Pernikahan</p>
+
+      <div class="hero-names" id="hero-names">
+        <span id="hero-groom-name">Rizky</span>
+        <span class="ampersand">&amp;</span>
+        <span id="hero-bride-name">Annisa</span>
+      </div>
+
+      <p class="hero-date" id="hero-event-date">Sabtu, 11 Oktober 2025</p>
+
+      <div class="hero-guest-wrapper" id="hero-guest-wrapper" style="display:none;">
+        <span class="hero-guest-label">Kepada Yth.</span>
+        <span class="hero-guest-name" id="hero-guest-name"></span>
+      </div>
+    </div>
+
+    <div class="hero-scroll">
+      <span>Scroll ke bawah</span>
+      <span>↓</span>
+    </div>
+  </section>
+
+  <!-- ── AYAT QUOTE ── -->
+  <section style="padding: 4rem 1.5rem; background: var(--cream-dark); text-align:center;">
+    <div style="max-width:620px; margin:0 auto;" class="reveal">
+      <p style="font-size:0.65rem; letter-spacing:0.35em; text-transform:uppercase; color:var(--gold); margin-bottom:1.25rem; font-weight:600;">💫 Firman Allah SWT</p>
+      <blockquote style="font-family:'Cormorant Garamond',serif; font-size:clamp(1.1rem,3vw,1.4rem); color:var(--text); font-style:italic; line-height:1.9;" id="page-quote">
+        "Dan di antara tanda-tanda kekuasaan-Nya ialah Dia menciptakan untukmu istri-istri dari jenismu sendiri, supaya kamu cenderung dan merasa tenteram kepadanya."
+      </blockquote>
+      <p style="margin-top:1rem; font-size:0.8rem; color:var(--gold); font-weight:600;" id="page-quote-source">— QS. Ar-Rum: 21</p>
+    </div>
+  </section>
+
+  <!-- ── COUPLE ── -->
+  <section id="couple">
+    <div class="reveal">
+      <p class="section-badge">👫 Mempelai</p>
+      <h2 class="section-title">Dua Hati <span>Bersatu</span></h2>
+      <div class="section-divider"><span class="section-divider-icon">💍</span></div>
+    </div>
+
+    <div class="couple-grid reveal">
+      <!-- Groom -->
+      <div class="couple-card">
+        <div class="couple-photo-placeholder" id="groom-photo-wrap">
+          <span>🤵</span>
+        </div>
+        <h3 class="couple-name" id="groom-name-display">Rizky Pratama</h3>
+        <p class="couple-formal-name" id="groom-formal-display">Rizky Pratama, S.T.</p>
+        <div class="couple-parents">
+          <p>Putra dari</p>
+          <p><strong id="groom-father-display">Bapak Ahmad Pratama</strong></p>
+          <p>dan <strong id="groom-mother-display">Ibu Sari Pratama</strong></p>
+        </div>
+      </div>
+
+      <div class="couple-and">💑</div>
+
+      <!-- Bride -->
+      <div class="couple-card" style="animation-delay:0.2s;">
+        <div class="couple-photo-placeholder" id="bride-photo-wrap">
+          <span>👰</span>
+        </div>
+        <h3 class="couple-name" id="bride-name-display">Annisa Rahayu</h3>
+        <p class="couple-formal-name" id="bride-formal-display">Annisa Rahayu, S.Pd.</p>
+        <div class="couple-parents">
+          <p>Putri dari</p>
+          <p><strong id="bride-father-display">Bapak Hendra Rahayu</strong></p>
+          <p>dan <strong id="bride-mother-display">Ibu Dewi Rahayu</strong></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── COUNTDOWN ── -->
+  <section id="countdown">
+    <div class="countdown-content reveal">
+      <span class="countdown-badge">⏳ Hitung Mundur</span>
+      <h2 class="countdown-title">Menuju Hari Bahagia</h2>
+      <p class="countdown-subtitle">Setiap detik adalah doa dan harapan</p>
+
+      <div class="countdown-grid">
+        <div class="countdown-item">
+          <span class="countdown-number" id="cd-days">00</span>
+          <span class="countdown-label">Hari</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-number" id="cd-hours">00</span>
+          <span class="countdown-label">Jam</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-number" id="cd-minutes">00</span>
+          <span class="countdown-label">Menit</span>
+        </div>
+        <div class="countdown-item">
+          <span class="countdown-number" id="cd-seconds">00</span>
+          <span class="countdown-label">Detik</span>
+        </div>
+      </div>
+
+      <p id="countdown-event-name" style="margin-top:1.5rem; font-family:'Cormorant Garamond',serif; font-size:1rem; color:rgba(255,255,255,0.55); font-style:italic;"></p>
+    </div>
+  </section>
+
+  <!-- ── EVENTS ── -->
+  <section id="events">
+    <div class="reveal">
+      <p class="section-badge">📅 Acara</p>
+      <h2 class="section-title">Detail <span>Acara</span></h2>
+      <div class="section-divider"><span class="section-divider-icon">🌸</span></div>
+    </div>
+
+    <div class="events-grid reveal">
+      <!-- Akad -->
+      <div class="event-card">
+        <div class="event-icon">🕌</div>
+        <p class="event-type">Akad Nikah</p>
+        <h3 class="event-title" id="akad-venue-display">Masjid Al-Ikhlas</h3>
+        <div class="event-detail">
+          <span class="event-detail-icon">📅</span>
+          <div class="event-detail-text">
+            <strong id="akad-date-display">Sabtu, 11 Oktober 2025</strong>
+            Pukul <span id="akad-time-display">08:00</span> WIB
+          </div>
+        </div>
+        <div class="event-detail">
+          <span class="event-detail-icon">📍</span>
+          <div class="event-detail-text" id="akad-address-display">Jl. Mawar No. 12, Jakarta Selatan</div>
+        </div>
+        <a href="#" id="akad-maps-btn" class="btn-maps" target="_blank">
+          🗺️ Buka Google Maps
+        </a>
+      </div>
+
+      <!-- Resepsi -->
+      <div class="event-card" style="animation-delay:0.15s;">
+        <div class="event-icon">🎊</div>
+        <p class="event-type">Resepsi Pernikahan</p>
+        <h3 class="event-title" id="reception-venue-display">Gedung Serbaguna Bahagia</h3>
+        <div class="event-detail">
+          <span class="event-detail-icon">📅</span>
+          <div class="event-detail-text">
+            <strong id="reception-date-display">Sabtu, 11 Oktober 2025</strong>
+            Pukul <span id="reception-time-display">11:00</span> WIB
+          </div>
+        </div>
+        <div class="event-detail">
+          <span class="event-detail-icon">📍</span>
+          <div class="event-detail-text" id="reception-address-display">Jl. Melati No. 45, Jakarta Selatan</div>
+        </div>
+        <a href="#" id="reception-maps-btn" class="btn-maps" target="_blank">
+          🗺️ Buka Google Maps
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── OUR STORY ── -->
+  <section id="story">
+    <div class="reveal">
+      <p class="section-badge">💫 Kisah Cinta</p>
+      <h2 class="section-title">Perjalanan <span>Kami</span></h2>
+      <div class="section-divider"><span class="section-divider-icon">💕</span></div>
+    </div>
+
+    <div class="story-timeline reveal" id="story-timeline">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+
+  <!-- ── GALLERY ── -->
+  <section id="gallery">
+    <div class="reveal">
+      <p class="section-badge">📸 Galeri</p>
+      <h2 class="section-title">Momen <span>Berharga</span></h2>
+      <div class="section-divider"><span class="section-divider-icon">✨</span></div>
+    </div>
+
+    <div class="gallery-grid reveal">
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=800&auto=format&fit=crop&q=80" alt="Foto Prewedding 1" loading="lazy" />
+        <div class="gallery-item-overlay">🔍</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1594938298603-c8148c4b4491?w=600&auto=format&fit=crop&q=80" alt="Foto Prewedding 2" loading="lazy" />
+        <div class="gallery-item-overlay">🔍</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=600&auto=format&fit=crop&q=80" alt="Foto Prewedding 3" loading="lazy" />
+        <div class="gallery-item-overlay">🔍</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1511285560929-80b456503681?w=600&auto=format&fit=crop&q=80" alt="Pernikahan" loading="lazy" />
+        <div class="gallery-item-overlay">🔍</div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://images.unsplash.com/photo-1606216794074-735e91aa2c92?w=600&auto=format&fit=crop&q=80" alt="Detail Cincin" loading="lazy" />
+        <div class="gallery-item-overlay">🔍</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WISHES / RSVP ── -->
+  <section id="wishes">
+    <div class="reveal">
+      <p class="section-badge">💌 Ucapan & RSVP</p>
+      <h2 class="section-title">Doa & <span>Ucapan</span></h2>
+      <div class="section-divider"><span class="section-divider-icon">🌹</span></div>
+      <p style="font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--text-light); font-style:italic; max-width:500px; margin:0 auto;">
+        Kehadiran dan doa Anda adalah anugerah terindah bagi kami
+      </p>
+    </div>
+
+    <!-- Form -->
+    <div class="wishes-form-wrapper reveal">
+      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.35rem; color:var(--dark); margin-bottom:1.25rem;">Kirim Ucapan 💌</h3>
+      <form id="wish-form" onsubmit="submitWish(event)">
+        <div class="form-group">
+          <label for="wish-name">Nama</label>
+          <input type="text" id="wish-name" placeholder="Nama lengkap Anda" required maxlength="80" />
+        </div>
+        <div class="form-group">
+          <label>Konfirmasi Kehadiran</label>
+          <div class="rsvp-options">
+            <label class="rsvp-option">
+              <input type="radio" name="rsvp" value="hadir" required />
+              <span class="rsvp-option-label">✅ Hadir</span>
+            </label>
+            <label class="rsvp-option">
+              <input type="radio" name="rsvp" value="tidak" />
+              <span class="rsvp-option-label">❌ Tidak Hadir</span>
+            </label>
+            <label class="rsvp-option">
+              <input type="radio" name="rsvp" value="ragu" />
+              <span class="rsvp-option-label">🤔 Mungkin</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="wish-text">Ucapan & Doa</label>
+          <textarea id="wish-text" placeholder="Tulis ucapan dan doa terbaik untuk kedua mempelai..." required maxlength="300"></textarea>
+        </div>
+        <button type="submit" class="btn-submit" id="wish-submit-btn">
+          💌 Kirim Ucapan
+        </button>
+      </form>
+    </div>
+
+    <!-- Wishes List -->
+    <div style="max-width:600px; margin: 2rem auto 0; text-align:left;" class="reveal">
+      <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; color:var(--dark); margin-bottom:1rem; text-align:center;">
+        💬 Ucapan dari Tamu
+      </h3>
+      <div class="wishes-list" id="wishes-list">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ── GIFT ── -->
+  <section id="gift">
+    <div class="reveal">
+      <p class="section-badge">🎁 Amplop Digital</p>
+      <h2 class="section-title">Hadiah <span>Pernikahan</span></h2>
+      <div class="section-divider"><span class="section-divider-icon">💛</span></div>
+      <p style="font-family:'Cormorant Garamond',serif; font-size:1rem; color:var(--text-light); font-style:italic; max-width:500px; margin:0 auto 0;">
+        Doa tulus Anda adalah hadiah terbesar. Namun bagi yang ingin memberikan hadiah, berikut informasinya.
+      </p>
+    </div>
+
+    <div class="gift-cards reveal">
+      <div class="gift-card">
+        <p class="gift-bank" id="bank1-name">Bank BCA</p>
+        <p class="gift-account-number" id="bank1-account">1234 5678 90</p>
+        <p class="gift-account-name" id="bank1-holder">a.n. Rizky Pratama</p>
+        <button class="btn-copy" onclick="copyToClipboard('bank1-account', this)">📋 Salin Nomor</button>
+      </div>
+      <div class="gift-card">
+        <p class="gift-bank" id="bank2-name">Bank Mandiri</p>
+        <p class="gift-account-number" id="bank2-account">0987 6543 21</p>
+        <p class="gift-account-name" id="bank2-holder">a.n. Annisa Rahayu</p>
+        <button class="btn-copy" onclick="copyToClipboard('bank2-account', this)">📋 Salin Nomor</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer id="footer">
+    <p class="footer-names" id="footer-names">Rizky & Annisa</p>
+    <p class="footer-tagline">Menikah dengan penuh cinta dan syukur</p>
+    <div class="footer-divider"></div>
+    <p class="footer-note">Dibuat dengan 💛 untuk hari yang paling istimewa</p>
+    <p class="footer-note" style="margin-top:0.5rem;" id="footer-date">— Sabtu, 11 Oktober 2025 —</p>
+  </footer>
+
+</main>
+
+<!-- ── Toast Notification ── -->
+<div id="toast" style="display:none;"></div>
+
+<!-- Scripts -->
+<script src="js/db.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
